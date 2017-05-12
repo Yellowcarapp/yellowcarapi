@@ -1,0 +1,35 @@
+table.table-bordered.dataTable tbody{
+    color: #333;
+}
+.dataTables_empty{
+    text-align: center;
+}
+
+.inactive{
+    opacity: 0.6 !important;
+}
+
+
+.stat_list > li > a{
+    padding: 0px !important;
+}
+
+
+.stat_list > li > a > div.info-box {
+    min-height: 60px;
+}
+
+.stat_list > li > a > div > .info-box-icon{
+    height: 60px;
+    width: 60px;
+    line-height: 60px;
+}
+
+.stat_list > li > a > div > .info-box-content{
+    margin-left: 60px;
+}
+.stat_list > li > a > div > .info-box-content span{
+    font-size: 12px;
+    width: 77px;
+    word-wrap: break-word !important;
+}

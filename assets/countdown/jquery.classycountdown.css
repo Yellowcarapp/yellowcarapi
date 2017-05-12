@@ -1,0 +1,41 @@
+/*!
+ * jQuery ClassyCountdown
+ * www.class.pm
+ *
+ * Written by Marius Stanciu - Sergiu <marius@class.pm>
+ * Licensed under the MIT license www.class.pm/LICENSE-MIT
+ * Version 1.0.0
+ *
+ */
+
+.ClassyCountdown-wrapper > div {
+    display: inline-block;
+    position: relative;
+    width: calc(25% - 20px);
+    margin: 10px;
+}
+
+.ClassyCountdown-wrapper .ClassyCountdown-value {
+    width: 100%;
+    line-height: 1em;
+    position: absolute;
+    top: 50%;
+    text-align: center;
+    left: 0;
+    display: block;
+	padding-left:0px ;
+}
+.ClassyCountdown-hours , .ClassyCountdown-minutes , .ClassyCountdown-seconds , .ClassyCountdown-days{
+float: left;
+}
+
+.ClassyCountdown-value > span{
+	padding-left:0px !important;
+}
+
+.ClassyCountdown-value{
+font-size: 28px !important;
+font-weight: 400 !important;
+color: rgb(52, 73, 94) !important;
+margin-top: -24px !important;
+}

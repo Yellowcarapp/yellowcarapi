@@ -1,0 +1,45 @@
+.content {
+	padding: 1em;
+}
+.title {
+	margin: 0px;
+	color: #0976a5;
+	font-size: 32px;
+}
+.title span {
+	color: #4e4646;
+}
+.subtitle {
+	margin-top: 5px;
+}
+
+.avatar-container {
+	float: left;
+	width: 250px;
+	height: 300px;
+	position: absolute;
+	left: -35;
+	top: 0;
+}
+#avatar {
+	width: 100px;
+	margin-left: 15px;
+}
+.edit-avatar {
+	float: right;
+	margin: -1px 0 0 -38px;
+	position: relative;
+	padding: 4px 6px !important;
+}
+.edit-header {
+	float: right;
+	padding: 7px 9px !important;
+	margin: -1px;
+}
+.edit-bg {
+	float: right;
+}
+ul li.active > a {
+	text-decoration: underline;
+	color: #205079;
+}

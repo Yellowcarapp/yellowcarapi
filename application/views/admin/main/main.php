@@ -1,0 +1,478 @@
+<style>
+    #map_canvas{
+		}	
+    #trips{display:none}
+    #SearchPanel{
+      width: 98%;
+      height: 200px;
+      position: absolute;
+      background-color: black;
+      z-index: 10;
+      opacity: 0.8;
+      color: white;
+      font-weight: bold;
+      padding: 10px;
+      display:none;
+    }
+    #SearchPanel label
+    {
+      width:100%;
+    }
+    #SearchPanel select,#SearchPanel input
+    {
+      width:100%;
+      color:black;
+    }
+    #SearchPanel button
+    {
+      color:black;
+    }
+    #SearchBtn{
+      position: absolute;
+    top: 10px;
+    z-index: 10;
+    background-color: black;
+    color: white;
+    font-weight: bold;
+    opacity: 0.8;
+    padding: 5px;
+    border-radius: 0px 0px 5px 5px;
+    right: 50%;
+    cursor: pointer;
+    }
+.ScrollContentMap
+{
+overflow-y: scroll;
+}
+
+.ScrollContentMap::-webkit-scrollbar {
+   width:6px;
+}
+
+.ScrollContentMap::-webkit-scrollbar-track {
+   background: #eee
+}
+
+.ScrollContentMap::-webkit-scrollbar-thumb {
+   background: #ccc;
+}
+.driver_trip .two_tabs{
+height: 40px;
+line-height: 40px;
+text-align: center;
+background: #eee;
+border-bottom: 1px solid #ddd;}
+</style>
+<div class="content-wrapper first_page new_design">
+  <div class="col-sm-12">
+    <div class="col-sm-9 div_map">
+      <div id="SearchPanel">
+          <form onsubmit="return false;">
+            <div class="col-sm-12">
+              <div class="col-sm-12">
+              <h3 class="search_tit"><i class="fa fa-search" aria-hidden="true"></i><?=lang('ADVANCED_SEARCH')?></h3>
+                 <div class="col-sm-4">
+                    <div class="col-sm-3">
+                       <p><?=lang('Level')?></p>
+                    </div>
+                    <div class="col-sm-9">
+                        <select id="levelId" class="form-control">
+                            <option value=''><?=lang('Select')?></option>
+                           <?php if(isset($levels)){?>
+                            <?php foreach($levels as $level):?>
+                            <option value="<?php echo $level['id'];?>"><?php echo $level['name'];?></option>
+                            <? endforeach;?>
+                            <?php }?>
+
+                           
+                            
+                      </select>
+                    </div>
+                 </div>
+                 
+               <div class="col-sm-6">
+                    <div class="col-sm-3">
+                       <p><?=lang('Address')?></p>
+                    </div>
+                    <div class="col-sm-9">
+                        <input class="form-control" type="text" id="GeoAddress">
+                    </div>
+                 </div>
+                
+              </div>
+              <div class="col-sm-12">
+                 <div class="col-sm-4">
+                    <div class="col-sm-3">
+                       <p><?=lang('Status')?></p>
+                    </div>
+                    <div class="col-sm-9">
+                        <select id="AllDrivers"  class="form-control">
+                            <option value="true"><?=lang('All')?></option>
+                            <option value="free"><?=lang('Free')?></option>
+                            <option value="busy"><?=lang('Busy')?></option>
+                        </select>
+                    </div>
+                 </div>
+                 
+               <div class="col-sm-6">
+                    <div class="col-sm-3">
+                       <p><?=lang('Radius')?></p>
+                    </div>
+                    <div class="col-sm-9">
+                        <input class="form-control" type="number" id="radiusInKm">
+                    </div>
+                 </div>
+                
+              </div>
+            
+            </div>
+            <button type="button" class="btn btn-default filter_btn" onclick="Filter()"><?=lang('Filter')?></button>
+          </form>
+      </div>
+      <div id="SearchBtn" onclick="SwitchSearchPanel()"><?=lang('Search')?></div>
+      <div id="map_canvas"></div>
+    </div>
+    <div class="col-sm-3 driver_trip">
+    <div class="col-sm-12 two_tabs">
+     <div class="col-sm-6 txt_tab" style="cursor: pointer;" onclick="$('#trips').hide();$('#orders').show();">
+          <p><?=lang('Drivers')?></p>
+        </div>
+        <div class="col-sm-6 txt_tab" style="cursor: pointer;" onclick="$('#orders').hide();$('#trips').show()">
+          <p><?=lang('Trips')?></p>
+        </div>
+      </div>  
+      <div class="ScrollContentMap">      
+        <div id="orders"></div>
+        <div id="trips"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function CreateDriverElement(Obj)
+  {
+    var StatusName='available';
+    switch(Obj.tripStatus)
+    {
+      case 3:
+          StatusName = 'OnTheWay';
+        break;
+      case 4:
+          StatusName = 'arrived';
+        break;
+      case 5:
+          StatusName = 'picked up';
+        break;
+      case 6:
+          StatusName = 'Finished';
+        break;
+    }
+    var Class = '';
+    if(!Obj.tripId)Class='status_arrive';
+    var Return = '';
+    Return += '<div class="list_item">'+
+                '<div class="col-sm-3">'+
+                  //'<span class="small_cir"></span>'+
+                  '<img  src="<?php echo base_url() ?>resources/uploads/files/original/'+Obj.driverImage+'" onclick="OpenInfoWindow('+Obj.driverId+')"/>'+
+                '</div>'+
+                '<div class="col-sm-9">'+
+                  '<h3>'+Obj.driverFName+' '+Obj.driverLName+'</h3>'+
+                  '<p>'+Obj['levelName_<?=lang('db')?>']+'<i class="fa fa-check" aria-hidden="true"></i></p>'+
+                '</div>'+
+                '<div class="status_div">'+
+                  '<div class="col-sm-6">'+
+                    '<p><span class="status '+Class+'"></span>'+StatusName+'</p>'+
+                  '</div>'+
+                  '<div class="col-sm-3">'+
+                    '<p class="call_btn" onclick="Call('+Obj.driverMobile+')">CALL</p>'+
+                  '</div>'+
+                  '<div class="col-sm-3">'+
+                    '<p class="chat_txt" onclick="Chat('+Obj.driverId+')">Chat<i class="fa fa-circle" aria-hidden="true"></i></p>'+
+                  '</div>'+
+                '</div>'+
+              '</div>'
+      return Return;
+  }
+    var radiusInKm= 25;
+    var API='<?=$this->config->item('APISERVER')?>';
+    var ADMINAPI='<?php echo base_url() .'api/admin.php'?>';
+    var CENTER;
+    var Drivers_Arr;
+    var Drivers_Html;
+    var Ajax_Working=false;
+    var image="<?php echo base_url().'resources/admin/markers/marker_';?>";
+    var ProfileImg = "<?php echo base_url() .'resources/uploads/files/original/'?>"
+    var map;
+    var vehiclesInQuery = [];
+    var color;
+    var BusyTaxis;
+    var FreeTaxis;
+    var pinIcon;
+    var infowindow;
+    var geocoder ;
+    var CurrentAddress ;
+    var levelId='';
+    var circle;
+    var AllDrivers=true;
+    function GetAllDrivers()
+    {
+        if(Ajax_Working)return ;
+        Ajax_Working=true;
+        Drivers_Arr = [];
+        Drivers_Html='';
+        $.ajax({
+            url:API+'nearby?AllDrivers='+AllDrivers+'&latitude='+CENTER[0]+'&longitude='+CENTER[1]+'&limit=100&distance='+radiusInKm
+            +'&levelId='+levelId+'&networkId=<?=$this->session->userdata('id');?>&random='+new Date().getTime(),
+            success:function(data){
+                ClearMarkers();
+                BusyTaxis=0;
+                FreeTaxis=0;
+                data.forEach(function(entry,i) {
+                    if(data[i].tripId)BusyTaxis+=1;
+                    else FreeTaxis+=1;
+                    color = 'green';
+                    if(parseInt(data[i].tripStatus)>=3)color = 'red';
+                    Drivers_Arr[data[i].driverId]=data[i];
+                    pinIcon = new google.maps.MarkerImage(image+color+'_'+data[i].levelId+'.png',null,null,null,new google.maps.Size(50, 50));  
+                    
+                    var content = '<div style="float:left;margin-right:5px">'+
+                    '<img align="left" width="50" height="50" src="'+ProfileImg+data[i].driverImage+'"/>'+
+                    '</div>'+
+                    '<div style="float:left">'+data[i].driverFName+' '+ data[i].driverLName+'<br/>'+
+                    data[i].driverMobile+'<br/>'+
+                    data[i]['levelName_<?=lang('db')?>']+'<br/>';
+                    if(data[i].tripId)content+='Have Trip With ID #'+data[i].tripId
+                    content+='</div>'
+                    if(vehiclesInQuery[data[i].driverId] && vehiclesInQuery[data[i].driverId].marker)
+                    {
+                        vehiclesInQuery[data[i].driverId].content = content
+                        vehiclesInQuery[data[i].driverId].marker.setMap(map);
+                        vehiclesInQuery[data[i].driverId].marker.setPosition(new google.maps.LatLng(data[i].geo.coordinates[1],data[i].geo.coordinates[0]));
+                        vehiclesInQuery[data[i].driverId].marker.setIcon(pinIcon)
+                    }else
+                    {
+                        var marker = new google.maps.Marker({icon:pinIcon,position: new google.maps.LatLng(data[i].geo.coordinates[1],data[i].geo.coordinates[0]),optimized: true,map: map});
+                        vehiclesInQuery[data[i].driverId] = {lat:data[i].geo.coordinates[1],lon:data[i].geo.coordinates[0],Id:data[i].driverId,name:data[i].driverId,marker:marker,content:content};
+                        google.maps.event.addListener(vehiclesInQuery[data[i].driverId].marker, 'click', function(innerKey) {
+                            return function() {OpenInfoWindow(innerKey)}
+                          }(data[i].driverId));
+                  }
+                  Drivers_Html +=CreateDriverElement(data[i])//'<li style="background-color:'+color+'">'+'(#'+data[i].driverId+') '+data[i].driverFName+' '+data[i].driverLName+' '+((data[i].tripId)?'#'+data[i].tripId:'')+'</li>';
+                })
+                $('#orders').html(Drivers_Html);
+                Ajax_Working=false;
+                $('#Filter_Taxi_Free').html(FreeTaxis+' Free');
+                $('#Filter_Taxi_Busy').html(BusyTaxis+' Busy');
+            },
+            error:function(){Ajax_Working=false;}
+        });
+    }
+    function OpenInfoWindow(innerKey)
+    {
+        infowindow.setContent(vehiclesInQuery[innerKey].content);  
+        infowindow.open(map, vehiclesInQuery[innerKey].marker);
+    }
+    function GetCounts()
+    {
+        var currentDate = new Date();
+        var day = currentDate.getDate()
+        if(day<10)day = '0'+day
+        var month = currentDate.getMonth() + 1
+        if(month<10)month = '0'+month
+        var year = currentDate.getFullYear()
+        var Today = year+"-"+month+"-"+day;
+        $.ajax({url:API+'counts?networkId=<?=$this->session->userdata('id');?>&random='+new Date().getTime(),success:function(data){
+                $('.three_tab .col-sm-3:nth(0) p:nth(0) span').html('('+data.free+')');
+                $('.three_tab .col-sm-3:nth(0) p:nth(1) span').html('('+data.busy+')');
+            }
+        });
+        $.ajax({url:API+'TripCounts?networkId=<?=$this->session->userdata('id');?>&random='+new Date().getTime(),success:function(data){
+              $('.three_tab .col-sm-3:nth(1) p:nth(0) span').html('('+data[1][0].total+')');
+              $('.three_tab .col-sm-3:nth(1) p:nth(1) span').html('('+data[2][0].total+')');
+              $('.three_tab .col-sm-3:nth(2) p:nth(0) span').html('(0)');
+              $('.three_tab .col-sm-3:nth(2) p:nth(1) span').html('(0)');
+              if(data[0].length) 
+              {
+                if(data[0][0] && data[0][0].total)
+                {
+                    var DateCount = data[0][0].TripDate.replace(/T/, ' ').replace(/\..+/, '').split(' ')[0]
+                    if(Today == DateCount)
+                    {
+                        $('.three_tab .col-sm-3:nth(2) p:nth(0) span').html('('+data[0][0].total+')');
+                    }
+                    else
+                    {
+                        $('.three_tab .col-sm-3:nth(2) p:nth(1) span').html('('+data[0][0].total+')');
+                    }
+                }
+                if(data[0][1] && data[0][1].total)
+                {
+                    var DateCount = data[0][1].TripDate.replace(/T/, ' ').replace(/\..+/, '').split(' ')[0]
+                    if(Today == DateCount)
+                    {
+                        $('.three_tab .col-sm-3:nth(2) p:nth(0) span').html('('+data[0][1].total+')');
+                    }
+                    else
+                    {
+                      $('.three_tab .col-sm-3:nth(2) p:nth(1) span').html('('+data[0][1].total+')');
+                    }
+                }
+              }
+              
+            }
+        });
+    }
+    function ClearMarkers()
+    {
+        vehiclesInQuery.forEach(function(entry,i) {vehiclesInQuery[i].marker.setMap(null);});
+    }
+    function CreateMap(position)
+    {
+        if(!position)
+        {
+          position={coords:{latitude:'<?=$startPoint[0]?>',longitude:'<?=$startPoint[1]?>'}}
+        }
+        console.log(position);
+        CENTER = [position.coords.latitude,position.coords.longitude];
+        var loc = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+        var Map_Options={center: loc,zoom: 9,mapTypeId: google.maps.MapTypeId.ROADMAP};//11
+        map = new google.maps.Map(document.getElementById("map_canvas"), Map_Options);
+        circle = new google.maps.Circle({
+            strokeColor: "#6D3099",
+            fillColor: "#B650FF",
+            strokeOpacity: 0.7,
+            strokeWeight: 1,
+            fillOpacity: 0.35,
+            map: map,
+            center: loc,
+            radius: ((radiusInKm+1) * 1000),
+            draggable: false
+        });
+        infowindow = new google.maps.InfoWindow(); 
+        geocoder = new google.maps.Geocoder();
+        codeAddress({location: new google.maps.LatLng(CENTER[0],CENTER[1])});
+        setInterval(GetAllDrivers,1000);
+        setInterval(GetCounts,3000);
+        var searchBox = new google.maps.places.SearchBox(document.getElementById('GeoAddress'));
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(document.getElementById('pac-input'));
+        google.maps.event.addListener(searchBox, 'places_changed', function() {
+          var places = searchBox.getPlaces();
+          if(places && places.length)
+          codeAddress({location: places[0].geometry.location});
+        });
+    }
+    function initMap(){ CreateMap();/*navigator.geolocation.getCurrentPosition(CreateMap);*/}
+    function SwitchSearchPanel()
+    {
+        if($('#SearchPanel').is(":visible"))
+        {
+          $('#SearchPanel').slideUp({duration:500});
+          $('#SearchBtn').animate({top: 10}, 500, function() {});
+        }
+        else 
+        {
+          $('#SearchPanel').slideDown({duration:500});
+          $('#SearchBtn').animate({top: 210}, 500, function() {});
+        }
+    }
+    function Filter()
+    {
+      radiusInKm = $('#radiusInKm').val();
+      CurrentAddress = $('#GeoAddress').val();
+      levelId = $('#levelId').val();
+      AllDrivers = $('#AllDrivers').val();
+      circle.setRadius(radiusInKm*1000);
+      codeAddress({address:CurrentAddress});
+    }
+    function codeAddress(Options) {
+        geocoder.geocode(Options, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                $('#GeoAddress').val(results[0].formatted_address)
+                map.setCenter(results[0].geometry.location);
+                circle.setCenter(results[0].geometry.location);
+                CENTER=[results[0].geometry.location.lat(),results[0].geometry.location.lng()]
+            }
+        });
+    }
+
+    $(function(){
+      $('#radiusInKm').val(radiusInKm);
+    })
+	
+	var heightPage=$( window ).height()- $( ".main-header" ).height();
+	var map_div=heightPage - 70;
+	$('.new_design').css({"height":heightPage + "px"} );
+	$('.new_design,.new_design>.col-sm-12').css({"min-height":heightPage + "px","margin-bottom":"-50px"} );
+	$('#map_canvas').css({"height":map_div + "px"} );
+	$('.div_map').css({"height":heightPage + "px","margin-bottom":"-50px"} );
+	 var heightPage=$( window ).height()- 205;
+  $('.ScrollContentMap').css({"height":heightPage + "px"} ); 
+	
+	var Trips_Html='';
+  var Ajax_Working2=false;
+  function CreateTripElement(Obj)
+  {
+    var Class = '';
+    var Return = '';
+    var ShowDate=Obj.tripDueDate;
+    if(Obj.tripNow==1)ShowDate=Obj.tripCreateDate;
+    Return += '<div class="list_item">'+
+                '<div class="col-sm-9">'+
+                  '<h3>'+Obj.passengerName+' ('+Obj.countryTel+ltrim(Obj.passengerMobile,'0')+')</h3>'+
+                '</div>'+
+                '<div class="col-sm-9">'+
+                  '<h3>'+ShowDate+'</h3>'+
+                '</div>'+
+                '<div class="status_div">'+
+                  '<div class="col-sm-12">'+
+                    '<p>From : '+Obj.tripFromAddress+'</p>'+//tripToAdress
+                  '</div>'+
+                '</div>'+
+                '<div class="status_div">'+
+                  '<div class="col-sm-12">'+
+                    '<p>To : '+Obj.tripToAdress+'</p>'+//
+                  '</div>'+
+                '</div>'+
+              '</div>'
+      return Return;
+  }
+	function GetTrips()
+  {
+      if(Ajax_Working2)return ;
+      Ajax_Working2=true;
+      Trips_Html='';
+      $.ajax({
+            url:ADMINAPI+'/trips/failed?networkId=<?=$this->session->userdata('id');?>',
+            success:function(data){
+              data=JSON.parse(data);
+                data.forEach(function(entry,i) {
+                    Trips_Html +=CreateTripElement(data[i])
+                })
+                $('#trips').html(Trips_Html);
+                Ajax_Working2=false;
+            },
+            error:function(){Ajax_Working2=false;}
+        });
+  }
+  setInterval(GetTrips,5000);
+	GetTrips();
+	function ltrim (str, charlist) {
+  //  discuss at: http://locutus.io/php/ltrim/
+  // original by: Kevin van Zonneveld (http://kvz.io)
+  //    input by: Erkekjetter
+  // improved by: Kevin van Zonneveld (http://kvz.io)
+  // bugfixed by: Onno Marsman (https://twitter.com/onnomarsman)
+  //   example 1: ltrim('    Kevin van Zonneveld    ')
+  //   returns 1: 'Kevin van Zonneveld    '
+
+  charlist = !charlist ? ' \\s\u00A0' : (charlist + '')
+    .replace(/([\[\]\(\)\.\?\/\*\{\}\+\$\^:])/g, '$1')
+
+  var re = new RegExp('^[' + charlist + ']+', 'g')
+
+  return (str + '')
+    .replace(re, '')
+}
+	
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDyl86uXLuo0Bmr-Eonvc-Nw3YvWriG0tk&callback=initMap&libraries=places"></script>

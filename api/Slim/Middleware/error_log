@@ -1,0 +1,3 @@
+[19-Sep-2016 19:29:14 UTC] PHP Fatal error:  Class 'Slim_Middleware' not found in /home/cabservers/public_html/app/api/Slim/Middleware/ContentTypes.php on line 47
+[19-Sep-2016 19:29:14 UTC] PHP Fatal error:  Class 'Slim_Middleware' not found in /home/cabservers/public_html/app/api/Slim/Middleware/Flash.php on line 47
+[19-Sep-2016 19:29:15 UTC] PHP Fatal error:  Class 'Slim_Middleware' not found in /home/cabservers/public_html/app/api/Slim/Middleware/MethodOverride.php on line 48

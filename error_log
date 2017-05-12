@@ -1,0 +1,11 @@
+[09-Oct-2016 03:13:18 America/Chicago] PHP Parse error:  syntax error, unexpected '->' (T_OBJECT_OPERATOR) in /home/apdoc/public_html/yellowcar/application/controllers/Drivers.php on line 380
+[09-Oct-2016 03:13:30 America/Chicago] PHP Parse error:  syntax error, unexpected '->' (T_OBJECT_OPERATOR) in /home/apdoc/public_html/yellowcar/application/controllers/Drivers.php on line 380
+[09-Oct-2016 03:13:30 America/Chicago] PHP Parse error:  syntax error, unexpected '->' (T_OBJECT_OPERATOR) in /home/apdoc/public_html/yellowcar/application/controllers/Drivers.php on line 380
+[09-Oct-2016 03:13:36 America/Chicago] PHP Parse error:  syntax error, unexpected '->' (T_OBJECT_OPERATOR) in /home/apdoc/public_html/yellowcar/application/controllers/Drivers.php on line 380
+[09-Oct-2016 03:13:56 America/Chicago] PHP Parse error:  syntax error, unexpected ';' in /home/apdoc/public_html/yellowcar/application/controllers/Drivers.php on line 387
+[09-Oct-2016 04:02:47 America/Chicago] PHP Parse error:  syntax error, unexpected '->' (T_OBJECT_OPERATOR) in /home/apdoc/public_html/yellowcar/application/controllers/Drivers.php on line 380
+[09-Oct-2016 04:03:04 America/Chicago] PHP Parse error:  syntax error, unexpected '->' (T_OBJECT_OPERATOR) in /home/apdoc/public_html/yellowcar/application/controllers/Drivers.php on line 380
+[09-Oct-2016 04:03:08 America/Chicago] PHP Parse error:  syntax error, unexpected ';' in /home/apdoc/public_html/yellowcar/application/controllers/Drivers.php on line 387
+[09-Oct-2016 04:03:23 America/Chicago] PHP Parse error:  syntax error, unexpected 'else' (T_ELSE), expecting function (T_FUNCTION) in /home/apdoc/public_html/yellowcar/application/controllers/Drivers.php on line 474
+[09-Oct-2016 04:03:56 America/Chicago] PHP Parse error:  syntax error, unexpected 'else' (T_ELSE), expecting function (T_FUNCTION) in /home/apdoc/public_html/yellowcar/application/controllers/Drivers.php on line 474
+[09-Oct-2016 04:04:00 America/Chicago] PHP Parse error:  syntax error, unexpected 'else' (T_ELSE), expecting function (T_FUNCTION) in /home/apdoc/public_html/yellowcar/application/controllers/Drivers.php on line 474

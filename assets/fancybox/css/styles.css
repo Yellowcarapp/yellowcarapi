@@ -1,0 +1,70 @@
+
+.form label {
+ margin-left: 10px;
+ color: #999999;
+ }
+
+#send_form:hover {
+	background: #f47c20;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f88e11), to(#f06015));
+	background: -moz-linear-gradient(top,  #f88e11,  #f06015);
+
+}
+#send_form:active {
+	color: #fcd3a5;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f47a20), to(#faa51a));
+	background: -moz-linear-gradient(top,  #f47a20,  #faa51a);
+	
+}
+
+#form-div {
+background-color:#F5F5F5;
+padding:15px;
+}
+
+#show_our_contact_form {
+margin:30px auto;
+width:100%;
+display: none;
+
+}
+#Forget_Part{
+  margin-left: 0px;
+  margin-top: 10px;
+  width: 97%;
+}
+
+#Forget_Part .label{
+  margin-left: 0px;
+  margin-top: 5px;
+  color: #df5b49;	
+}
+
+#Forget_Part input{
+  margin-left: 0px;
+  margin-top: 5px;
+  width: 100%;
+}
+
+
+.fancybox-opened{
+  width: 35% !important;
+}
+.fancybox-inner{
+width: 100% !important;
+height:  auto !important	
+}
+
+
+.errormsg,label,#contact_us{
+  color: rgb(236, 26, 26);
+  margin-top: 5px;
+  font-size: 16px;	
+}
+
+#fancybox-wrap {
+  margin: -70px 0 0 290px;
+}
+.fancybox-custom .fancybox-skin {
+			box-shadow: 0 0 50px #222;
+}
